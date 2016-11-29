@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<title> Twitter Search </title>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+<style>
+
+.button {
+    background-color: #b37700; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+input[type=text] {
+		border: 2px #b37700;
+    border-radius: 4px;
+    width: 130px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('searchicon.png');
+    background-position: 10px 10px; 
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+input[type=text]:focus {
+    width: 70%;
+}
+
+body {
+    background-color: #2e2e1f;
+}
+
+h1 {
+		font-family: "Times New Roman", Times, serif;
+    color: #b37700;
+    text-align: center;
+}
+
+p {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>Twitter Search</h1>
+
+<%= yield %>
+
+</body>
+</html>
