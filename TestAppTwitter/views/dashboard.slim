@@ -1,0 +1,16 @@
+h2 Dashboard
+
+= p "No. of unique users tweeting about '#{params[:keyword]}': #{ @@tweets.map { |x| x.user.screen_name }.uniq.count }"
+br
+br
+= p "No. of tweets : #{ @@tweets.map { |x| x.text }.count }"
+br
+br
+= p "No. of re-tweets : #{ @@tweets.map { |x| x.text }.count - @@tweets.map { |x| x.text }.uniq.count }"
+br
+
+
+p
+  '
+  a href="/results" Click here
+  ' to see the tweets
