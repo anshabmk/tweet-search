@@ -1,12 +1,5 @@
 <h2>Results</h2>
-<p id="retweets" onclick="fetchRetweets()">Re-Tweets</p>
 <% @@tweets.each do |tweet| %>
 <%= p "#{tweet.user.screen_name} : #{tweet.text} \n" %>
 <br><br>
 <% end %>
-
-<script>
-function fetchRetweets() {
-	    
-}
-</script>
