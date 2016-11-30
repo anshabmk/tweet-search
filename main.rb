@@ -13,10 +13,31 @@ get '/' do
 end
 
 post '/' do
+
+	@re_count = 0
 	@@tweets = client.search(params[:keyword], :result_type => "recent").take(1000).collect
+	@@tweets.each do |tweet|
+		if tweet.text.start_with? "RT"
+			@re_count += 1
+		end
+	end
+
 	erb :dashboard
 end
 
 get '/results' do
+
 	erb :results
+end
+
+post '/results/filter' do
+	@retweets = []
+	@filterVal = params[:filterOption]
+	@@tweets.each do |tweet|
+		if tweet.text.start_with? "RT"
+			@retweets.push tweet
+		end
+	end
+
+	erb :filter
 end

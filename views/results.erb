@@ -1,5 +1,31 @@
 <h2>Results</h2>
+<form id="filter1" action="/results/filter" method="post">
+	<input type="hidden" value="1" name="filterOption">
+</form>
+
+<form id="filter2" action="/results/filter" method="post">
+	<input type="hidden" value="2" name="filterOption">
+</form>
+
+<form id="filter3" action="/results/filter" method="post">
+	<input type="hidden" value="3" name="filterOption">
+</form>
+
+<form id="filter4" action="/results/filter" method="post">
+	<input type="hidden" value="4" name="filterOption">
+</form>
+
+Filter :
+	<button type="submit" class="button" form="filter1"><span>Re-tweets</span></button>
+	<div class="dropdown">
+  <button class="button">Date</button>
+	  <div class="dropdown-content">
+			<button type="submit" class="button" form="filter2"><span>Today</span></button>
+			<button type="submit" class="button" form="filter3"><span>Last 10 days</span></button>
+			<button type="submit" class="button" form="filter4"><span>Before 10 days</span></button>
+	  </div>
+	</div>
+
 <% @@tweets.each do |tweet| %>
-<%= p "#{tweet.user.screen_name} : #{tweet.text} \n" %>
-<br><br>
+<p><%= p "#{tweet.created_at} #{tweet.user.screen_name} : #{tweet.text} \n" %></p>
 <% end %>
