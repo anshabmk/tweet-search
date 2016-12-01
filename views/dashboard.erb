@@ -4,6 +4,6 @@
 <br>
 <%= p "No. of tweets : #{ @@tweets.map { |x| x.text }.count }" %>
 <br>
-<%= p "No. of re-tweets : #{ @re_count }" %>
+<%= p "No. of re-tweets : #{ @@retweets.length }" %>
 <br>
 <a href="/results"> Click here </a> to see the tweets </p>

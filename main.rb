@@ -14,11 +14,11 @@ end
 
 post '/' do
 
-	@re_count = 0
-	@@tweets = client.search(params[:keyword], :result_type => "recent").take(1000).collect
+	@@retweets = []
+	@@tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
 	@@tweets.each do |tweet|
 		if tweet.text.start_with? "RT"
-			@re_count += 1
+			@@retweets.push tweet
 		end
 	end
 
@@ -31,12 +31,52 @@ get '/results' do
 end
 
 post '/results/filter' do
-	@retweets = []
+
+	@@filterArray = []
 	@filterVal = params[:filterOption]
-	@@tweets.each do |tweet|
-		if tweet.text.start_with? "RT"
-			@retweets.push tweet
-		end
+	case @filterVal
+		when "1"
+			@@tweets.each do |tweet|
+				if tweet.text.start_with? "RT"
+					@@filterArray.push tweet
+				end
+			end
+		when "2"
+			@@tweets.each do |tweet|
+				if tweet.created_at.strftime("%F") == Date.today.strftime("%F")
+					@@filterArray.push tweet
+				end
+			end
+		when "3"
+			@@tweets.each do |tweet|
+				if tweet.created_at.strftime("%F") > ((Date.today)-5).strftime("%F")
+					@@filterArray.push tweet
+				end
+			end
+		when "4"
+			@@tweets.each do |tweet|
+				if tweet.created_at.strftime("%F") <= ((Date.today)-5).strftime("%F")
+					@@filterArray.push tweet
+				end
+			end
+		when "11"
+			@@retweets.each do |tweet|
+				if tweet.created_at.strftime("%F") == Date.today.strftime("%F")
+					@@filterArray.push tweet
+				end
+			end
+		when "12"
+			@@retweets.each do |tweet|
+				if tweet.created_at.strftime("%F") > ((Date.today)-5).strftime("%F")
+					@@filterArray.push tweet
+				end
+			end
+		when "13"
+			@@retweets.each do |tweet|
+				if tweet.created_at.strftime("%F") <= ((Date.today)-5).strftime("%F")
+					@@filterArray.push tweet
+				end
+			end
 	end
 
 	erb :filter

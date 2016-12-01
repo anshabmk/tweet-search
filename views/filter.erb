@@ -1,3 +1,26 @@
-<% @retweets.each do |tweet| %>
+<form id="filter11" action="/results/filter" method="post">
+	<input type="hidden" value="11" name="filterOption">
+</form>
+
+<form id="filter12" action="/results/filter" method="post">
+	<input type="hidden" value="12" name="filterOption">
+</form>
+
+<form id="filter13" action="/results/filter" method="post">
+	<input type="hidden" value="13" name="filterOption">
+</form>
+
+Filter :
+	<a href="/results"><button class="button"><span>All tweets</span></button></a>
+	<div class="dropdown">
+  <button class="button">Date</button>
+	  <div class="dropdown-content">
+			<button type="submit" class="button" form="filter11"><span>Today</span></button>
+			<button type="submit" class="button" form="filter12"><span>Last 5 days</span></button>
+			<button type="submit" class="button" form="filter13"><span>Before 5 days</span></button>
+	  </div>
+	</div>
+
+<% @@filterArray.each do |tweet| %>
 <p><%= p "#{tweet.created_at} #{tweet.user.screen_name} : #{tweet.text} \n" %></p>
 <% end %>
