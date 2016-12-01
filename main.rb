@@ -1,83 +1,66 @@
 require 'sinatra'
 require 'twitter'
+require 'active_support/all'
 
 client = Twitter::REST::Client.new do |config|
-	config.consumer_key = "mhCWQ6xD08VXMIylJIZ98AXxh"
-	config.consumer_secret = "aawJm8w2XLrbHQO6SxYgKY4ii7ElNH97i4zGDx7V3IrCrQvAIR"
-	config.access_token = "800644619465670656-P832RHheNPDqT9zECCQyn6ZQPIYjwLa"
-	config.access_token_secret = "mrLqeqVgiziDK3P0aQPI5euBkvxkS8ANGflN1OSp2SlGs"
+  config.consumer_key = "mhCWQ6xD08VXMIylJIZ98AXxh"
+  config.consumer_secret = "aawJm8w2XLrbHQO6SxYgKY4ii7ElNH97i4zGDx7V3IrCrQvAIR"
+  config.access_token = "800644619465670656-P832RHheNPDqT9zECCQyn6ZQPIYjwLa"
+  config.access_token_secret = "mrLqeqVgiziDK3P0aQPI5euBkvxkS8ANGflN1OSp2SlGs"
 end
 
 get '/' do
-	erb :index
+  erb :index
 end
 
 post '/' do
+  @@retweets = []
+  @@tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
 
-	@@retweets = []
-	@@tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
-	@@tweets.each do |tweet|
-		if tweet.text.start_with? "RT"
-			@@retweets.push tweet
-		end
-	end
+  @@tweets.each do |tweet|
+    @@retweets.push tweet if tweet.text.start_with? "RT"
+  end
 
-	erb :dashboard
+  erb :dashboard
 end
 
 get '/results' do
-
-	erb :results
+  erb :results
 end
 
 post '/results/filter' do
-
-	@@filterArray = []
-	@filterVal = params[:filterOption]
-	case @filterVal
-		when "1"
-			@@tweets.each do |tweet|
-				if tweet.text.start_with? "RT"
-					@@filterArray.push tweet
-				end
-			end
-		when "2"
-			@@tweets.each do |tweet|
-				if tweet.created_at.strftime("%F") == Date.today.strftime("%F")
-					@@filterArray.push tweet
-				end
-			end
-		when "3"
-			@@tweets.each do |tweet|
-				if tweet.created_at.strftime("%F") > ((Date.today)-5).strftime("%F")
-					@@filterArray.push tweet
-				end
-			end
-		when "4"
-			@@tweets.each do |tweet|
-				if tweet.created_at.strftime("%F") <= ((Date.today)-5).strftime("%F")
-					@@filterArray.push tweet
-				end
-			end
-		when "11"
-			@@retweets.each do |tweet|
-				if tweet.created_at.strftime("%F") == Date.today.strftime("%F")
-					@@filterArray.push tweet
-				end
-			end
-		when "12"
-			@@retweets.each do |tweet|
-				if tweet.created_at.strftime("%F") > ((Date.today)-5).strftime("%F")
-					@@filterArray.push tweet
-				end
-			end
-		when "13"
-			@@retweets.each do |tweet|
-				if tweet.created_at.strftime("%F") <= ((Date.today)-5).strftime("%F")
-					@@filterArray.push tweet
-				end
-			end
-	end
-
-	erb :filter
+  filtered_tweets = []
+  
+  case params[:filter_option]
+  when "retweets"
+    @@tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet.text.start_with? "RT"
+    end
+  when "today"
+    @@tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet.created_at.to_date == Date.today
+    end
+  when "last_five_days"
+    @@tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet.created_at.to_date > (Date.today - 5.days)
+    end
+  when "before_five_days"
+    @@tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet.created_at.to_date <= (Date.today - 5.days)
+    end
+  when "retweets_today"
+    @@retweets.each do |tweet|
+      filtered_tweets.push tweet if tweet.created_at.to_date == Date.today
+    end
+  when "retweets_last_five_days"
+    @@retweets.each do |tweet|
+      filtered_tweets.push tweet if tweet.created_at.to_date > (Date.today - 5.days)
+    end
+  when "retweets_before_five_days"
+    @@retweets.each do |tweet|
+      filtered_tweets.push tweet if tweet.created_at.to_date <= (Date.today - 5.days)
+    end
+  end
+  
+  erb :filter, :locals => {:filtered_tweets => filtered_tweets}
 end
