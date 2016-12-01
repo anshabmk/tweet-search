@@ -21,6 +21,6 @@ Filter :
 	  </div>
 	</div>
 
-<% @@filterArray.each do |tweet| %>
+<% filtered_tweets.each do |tweet| %>
 <p><%= p "#{tweet.created_at} #{tweet.user.screen_name} : #{tweet.text} \n" %></p>
 <% end %>
