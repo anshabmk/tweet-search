@@ -1,6 +1,6 @@
 <h2>Results</h2>
 <form id="filter1" action="/results/filter" method="post">
-	<input type="hidden" value="retweets" name="filterOption">
+	<input type="hidden" value="retweets" name="filter_option">
 </form>
 
 <form id="filter2" action="/results/filter" method="post">
@@ -26,6 +26,6 @@ Filter :
 	  </div>
 	</div>
 
-<% @@tweets.each do |tweet| %>
-<p><%= p "#{tweet.created_at} #{tweet.user.screen_name} : #{tweet.text} \n" %></p>
+<% tweets.each do |tweet| %>
+<p><%= p "#{tweet[:date]} #{tweet[:name]} : #{tweet[:text]} \n" %></p>
 <% end %>

@@ -96,7 +96,7 @@
 }
 
 input[type=text] {
-		border: 2px #b37700;
+		border: 2px;
     border-radius: 4px;
     width: 200px;
     box-sizing: border-box;
@@ -105,10 +105,9 @@ input[type=text] {
 		font-family: 'Questrial';
     font-size: 16px;
     background-color: white;
-    background-image: url('searchicon.png');
     background-position: 10px 10px;
     background-repeat: no-repeat;
-    padding: 12px 20px 12px 40px;
+    padding: 12px 20px 5px 40px;
     -webkit-transition: width 0.4s ease-in-out;
     transition: width 0.4s ease-in-out;
 }
@@ -120,6 +119,7 @@ input[type=text]:focus {
 body {
     background-color: #2e2e1f;
 		font-family: 'Questrial';
+		color: white;
 }
 
 h1 {
@@ -141,12 +141,19 @@ p {
     font-size: 18px;
 		color : white;
 }
+
+table {
+			width: auto;
+}
+
+td,th {
+			text-align: left;
+			padding: 8px;
+}
+
 </style>
 </head>
 <body>
-
-<h1>Twitter Search</h1>
-<hr>
 
 <%= yield %>
 
