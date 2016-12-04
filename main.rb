@@ -2,9 +2,14 @@ require 'sinatra'
 require 'twitter'
 require 'active_support/all'
 require 'json'
-#require 'redis'
+require 'redis'
 
-#redis = Redis.new
+redis = Redis.new
+
+END {
+	redis.keys.each {|key| redis.del key }
+	puts "All redis keys deleted."
+}
 
 client = Twitter::REST::Client.new do |config|
 	config.consumer_key = "mhCWQ6xD08VXMIylJIZ98AXxh"
@@ -18,59 +23,72 @@ get '/' do
 end
 
 post '/' do
-  retweets = []
+	key = "key"
+  retweets = 0
   tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
-
 	tweets_hash = tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
 
-#	redis.set("#{params[:keyword]}",tweets_hash.to_json)
+	key << (rand*10000).to_int.to_s
+
+ 	redis.set(key,tweets_hash.to_json)
 
   tweets.each do |tweet|
-    retweets.push tweet if tweet.text.start_with? "RT"
+    retweets += 1 if tweet.text.start_with? "RT"
   end
 
-  erb :dashboard, :locals => { :tweets_hash => tweets,:retweets => retweets }
+  erb :dashboard, :locals => { :tweets => tweets, :retweets => retweets, :key => key }
 end
 
 post '/results' do
-	tweets = JSON.parse params[:tweets]
+	key = params[:key]
+	tweets = JSON.parse(redis.get(key))
+	retweets = []
+	filtered_tweets = []
+	tweets_retweets = params[:tweets_retweets]
 
-	erb :results, :locals => { :tweets => tweets }
-end
+	tweets.each do |tweet|
+		retweets.push tweet if tweet["text"].start_with? "RT"
+	end
 
-post '/results/filter' do
-  filtered_tweets = []
+	if tweets_retweets == "retweets"
+		case params[:filter_option]
+		when "today"
+			retweets.each do |tweet|
+				filtered_tweets.push tweet if tweet["time"].to_date == Date.today
+			end
+		when "last_five_days"
+			retweets.each do |tweet|
+				filtered_tweets.push tweet if tweet["time"].to_date > (Date.today - 5.days)
+			end
+		when "before_five_days"
+			retweets.each do |tweet|
+				filtered_tweets.push tweet if tweet["time"].to_date <= (Date.today - 5.days)
+			end
+		else
+			retweets.each do |tweet|
+				filtered_tweets.push tweet
+			end
+		end
+	else
+		case params[:filter_option]
+		when "today"
+			tweets.each do |tweet|
+				filtered_tweets.push tweet if tweet["time"].to_date == Date.today
+			end
+		when "last_five_days"
+			tweets.each do |tweet|
+				filtered_tweets.push tweet if tweet["time"].to_date > (Date.today - 5.days)
+			end
+		when "before_five_days"
+			tweets.each do |tweet|
+				filtered_tweets.push tweet if tweet["time"].to_date <= (Date.today - 5.days)
+			end
+		else
+			tweets.each do |tweet|
+				filtered_tweets.push tweet
+			end
+		end
+	end
 
-  case params[:filter_option]
-  when "retweets"
-    @@tweets.each do |tweet|
-      filtered_tweets.push tweet if tweet.text.start_with? "RT"
-    end
-  when "today"
-    @@tweets.each do |tweet|
-      filtered_tweets.push tweet if tweet.created_at.to_date == Date.today
-    end
-  when "last_five_days"
-    @@tweets.each do |tweet|
-      filtered_tweets.push tweet if tweet.created_at.to_date > (Date.today - 5.days)
-    end
-  when "before_five_days"
-    @@tweets.each do |tweet|
-      filtered_tweets.push tweet if tweet.created_at.to_date <= (Date.today - 5.days)
-    end
-  when "retweets_today"
-    @@retweets.each do |tweet|
-      filtered_tweets.push tweet if tweet.created_at.to_date == Date.today
-    end
-  when "retweets_last_five_days"
-    @@retweets.each do |tweet|
-      filtered_tweets.push tweet if tweet.created_at.to_date > (Date.today - 5.days)
-    end
-  when "retweets_before_five_days"
-    @@retweets.each do |tweet|
-      filtered_tweets.push tweet if tweet.created_at.to_date <= (Date.today - 5.days)
-    end
-  end
-
-  erb :filter, :locals => {:filtered_tweets => filtered_tweets}
+  erb :results, :locals => { :filtered_tweets => filtered_tweets, :key => key, :tweets_retweets => tweets_retweets }
 end

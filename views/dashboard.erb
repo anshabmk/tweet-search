@@ -6,12 +6,13 @@
 <br>
 <%= p "No. of tweets : #{ tweets.map { |x| x.text }.count }" %>
 <br>
-<%= p "No. of re-tweets : #{ retweets.length }" %>
+<%= p "No. of re-tweets : #{ retweets }" %>
 <br><br>
 
-<form id="tweets_json" action="/results" method="post">
-	<input type="hidden" value= "<% tweets.to_json %>" name="tweets">
+<form id="key_return" action="/results" method="post">
+	<input type="hidden" value="tweets" name="tweets_retweets">
+	<input type="hidden" value= "<%= p "#{key}" %>" name="key">
 </form>
 
-<button type="submit" form="tweets_json" class="button"><span>See all tweets</span></button>
+<button type="submit" form="key_return" class="button"><span>See all tweets</span></button>
 </center>
