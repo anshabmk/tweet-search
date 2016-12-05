@@ -1,6 +1,8 @@
 <h1>Twitter Search</h1>
 <hr>
 <h2> Dashboard</h2>
+<hr>
+
 <center>
 <P><%= p "No. of unique users tweeting about '#{params[:keyword]}': #{ tweets.map { |x| x.user.screen_name }.uniq.count }" %>
 <br>
