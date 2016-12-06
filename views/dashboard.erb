@@ -4,21 +4,37 @@
 <hr>
 
 <center>
-<% if params[:keyword].length > 0 %>
-<P><%= p "No. of unique users tweeting about '#{params[:keyword]}': #{ tweets.map { |x| x.user.screen_name }.uniq.count }" %>
+<% if error_message.length >0 %>
+<p>
+Uh...Ohh!!!
 <br>
-<%= p "No. of tweets : #{ tweets.map { |x| x.text }.count }" %>
+You seem to have entered an invalid search term.
 <br>
-<%= p "No. of re-tweets : #{ retweets }" %>
+<p class="p1">Error message: <i>"<%= "#{error_message}" %>"</i></p>
+<br>
+Possible reasons might be,
+<br>
+1.  You have entered 'Special characters' alone. (Eg: !,`,!! etc.)
+<br>
+2.  You might have ended up serching for 'Whitespaces' alone.
+<br>
+<br>
+<a href="/"><button class="button"><span>Go back</span></button>
+</a>
+</p>
+<% else %>
+<P><%= "No. of unique users tweeting about '#{params[:keyword]}': #{ tweets.map { |x| x.user.screen_name }.uniq.count }" %>
+<br>
+<%= "No. of tweets : #{ tweets.map { |x| x.text }.count }" %>
+<br>
+<%= "No. of re-tweets : #{ retweets }" %>
 <br><br>
 
 <form id="key_return" action="/results" method="post">
   <input type="hidden" value="tweets" name="tweets_retweets">
-  <input type="hidden" value= "<%= p "#{key}" %>" name="key">
+  <input type="hidden" value= "<%= "#{key}" %>" name="key">
 </form>
 
 <button type="submit" form="key_return" class="button"><span>See all tweets</span></button>
-<% else %>
-<p>Oops. You didn't entered anything to search.<a href="/">Click here</a> to try again.
 <% end %>
 </center>
