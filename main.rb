@@ -27,7 +27,11 @@ post '/' do
   if params[:keyword].length > 0
     key = "key"
     retweets = 0
-    tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
+    begin
+      tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
+    rescue Twitter::Error::Forbidden, Twitter::Error::BadRequest => e
+      redirect '/'
+    end
     tweets_hash = tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
 
     key << (rand*10000).to_int.to_s
@@ -42,7 +46,7 @@ post '/' do
   else
     erb :dashboard
   end
-  
+
 end
 
 post '/results' do
