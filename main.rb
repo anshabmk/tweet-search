@@ -23,20 +23,26 @@ get '/' do
 end
 
 post '/' do
-  key = "key"
-  retweets = 0
-  tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
-  tweets_hash = tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
 
-  key << (rand*10000).to_int.to_s
+  if params[:keyword].length > 0
+    key = "key"
+    retweets = 0
+    tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
+    tweets_hash = tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
 
-  redis.set(key,tweets_hash.to_json)
+    key << (rand*10000).to_int.to_s
 
-  tweets.each do |tweet|
-    retweets += 1 if tweet.text.start_with? "RT"
+    redis.set(key,tweets_hash.to_json)
+
+    tweets.each do |tweet|
+      retweets += 1 if tweet.text.start_with? "RT"
+    end
+
+    erb :dashboard, :locals => { :tweets => tweets, :retweets => retweets, :key => key }
+  else
+    erb :dashboard
   end
-
-  erb :dashboard, :locals => { :tweets => tweets, :retweets => retweets, :key => key }
+  
 end
 
 post '/results' do

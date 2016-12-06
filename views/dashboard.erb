@@ -4,6 +4,7 @@
 <hr>
 
 <center>
+<% if params[:keyword].length > 0 %>
 <P><%= p "No. of unique users tweeting about '#{params[:keyword]}': #{ tweets.map { |x| x.user.screen_name }.uniq.count }" %>
 <br>
 <%= p "No. of tweets : #{ tweets.map { |x| x.text }.count }" %>
@@ -17,4 +18,7 @@
 </form>
 
 <button type="submit" form="key_return" class="button"><span>See all tweets</span></button>
+<% else %>
+<p>Oops. You didn't entered anything to search.<a href="/">Click here</a> to try again.
+<% end %>
 </center>
