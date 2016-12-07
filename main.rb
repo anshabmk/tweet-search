@@ -20,16 +20,26 @@ client = Twitter::REST::Client.new do |config|
 end
 
 get '/' do
-  erb :index
+  error_message = ""
+  erb :index, :locals => { :error_message => error_message }
 end
 
 post '/' do
 
   begin
-    error_message = ""
-    tweets = client.search(params[:keyword], :result_type => "recent").take(100).collect
-  rescue Twitter::Error::Forbidden, Twitter::Error::BadRequest => e
-    error_message = e.message
+    tweets = client.search(params[:keyword], :result_type => "recent")
+  rescue Twitter::Error::Forbidden => e
+    p e.message
+    error_message = "Error!! Your search term can't start with special characters! Please try again..."
+    erb :index, :locals => { :error_message => error_message }
+  rescue Twitter::Error::BadRequest => e
+    p e.message
+    error_message = "You seem to have entered nothing. Whitespaces alone aren't allowed. Please try again..."
+    erb :index, :locals => { :error_message => error_message }
+  rescue Twitter::Error => e
+    p e.message
+    error_message = "Timed Out! Please try again..."
+    erb :index, :locals => { :error_message => error_message }
   else
     key = SecureRandom.hex
     tweets_hash = tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
@@ -39,8 +49,8 @@ post '/' do
     tweets.each do |tweet|
       retweets += 1 if tweet.text.start_with? "RT"
     end
+    erb :dashboard, :locals => { :tweets => tweets, :retweets => retweets, :key => key }
   end
-  erb :dashboard, :locals => { :tweets => tweets, :retweets => retweets, :key => key, :error_message => error_message }
 
 end
 

@@ -50,6 +50,7 @@ Filter :
   </div>
 </center>
 <hr>
+<% if filtered_tweets.count > 0 %>
 <p>
   <table>
     <tr>
@@ -59,7 +60,6 @@ Filter :
       <th>Tweet</th>
     </tr>
 <% number = 0 %>
-<% if filtered_tweets.count > 0 %>
   <% filtered_tweets.each do |tweet| %>
       <tr>
         <td> <%= number += 1 %> </td>
@@ -70,6 +70,6 @@ Filter :
   <% end %>
     </table>
 <% else %>
-  <p class="p1"> No tweets to display. </p>
+  <p> No tweets to display. </p>
 <% end %>
 </p>
