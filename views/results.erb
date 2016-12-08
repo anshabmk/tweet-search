@@ -50,7 +50,9 @@ Filter :
   </div>
 </center>
 <hr>
-<% if filtered_tweets.count > 0 %>
+<% if filtered_tweets.empty? %>
+  <p> No tweets to display. </p>
+<% else %>
 <p>
   <table>
     <tr>
@@ -69,7 +71,5 @@ Filter :
       </tr>
   <% end %>
     </table>
-<% else %>
-  <p> No tweets to display. </p>
-<% end %>
 </p>
+<% end %>

@@ -30,7 +30,7 @@ post '/' do
     tweets = client.search(params[:keyword], :result_type => "recent")
   rescue Twitter::Error::Forbidden => e
     p e.message
-    error_message = "Error!! Your search term can't start with special characters! Please try again..."
+    error_message = "Your input was invalid. Special characters alone aren't allowed! Please try again..."
     erb :index, :locals => { :error_message => error_message }
   rescue Twitter::Error::BadRequest => e
     p e.message
