@@ -67,41 +67,25 @@ post '/results' do
 
   if tweets_retweets == "retweets"
     case params[:filter_option]
-    when "today"
-      retweets.each do |tweet|
-        filtered_tweets.push tweet if tweet["time"].to_date == Date.today
-      end
-    when "last_five_days"
-      retweets.each do |tweet|
-        filtered_tweets.push tweet if tweet["time"].to_date > (Date.today - 5.days)
-      end
-    when "before_five_days"
-      retweets.each do |tweet|
-        filtered_tweets.push tweet if tweet["time"].to_date <= (Date.today - 5.days)
-      end
-    else
-      retweets.each do |tweet|
-        filtered_tweets.push tweet
-      end
+      when "today"
+        retweets.each { |tweet| filtered_tweets.push tweet if tweet["time"].to_date == Date.today }
+      when "last_five_days"
+        retweets.each { |tweet| filtered_tweets.push tweet if tweet["time"].to_date > (Date.today - 5.days) }
+      when "before_five_days"
+        retweets.each { |tweet| filtered_tweets.push tweet if tweet["time"].to_date <= (Date.today - 5.days) }
+      else
+        retweets.each { |tweet| filtered_tweets.push tweet }
     end
   else
     case params[:filter_option]
-    when "today"
-      tweets.each do |tweet|
-        filtered_tweets.push tweet if tweet["time"].to_date == Date.today
-      end
-    when "last_five_days"
-      tweets.each do |tweet|
-        filtered_tweets.push tweet if tweet["time"].to_date > (Date.today - 5.days)
-      end
-    when "before_five_days"
-      tweets.each do |tweet|
-        filtered_tweets.push tweet if tweet["time"].to_date <= (Date.today - 5.days)
-      end
-    else
-      tweets.each do |tweet|
-        filtered_tweets.push tweet
-      end
+      when "today"
+        tweets.each { |tweet| filtered_tweets.push tweet if tweet["time"].to_date == Date.today }
+      when "last_five_days"
+        tweets.each { |tweet| filtered_tweets.push tweet if tweet["time"].to_date > (Date.today - 5.days) }
+      when "before_five_days"
+        tweets.each { |tweet| filtered_tweets.push tweet if tweet["time"].to_date <= (Date.today - 5.days) }
+      else
+        tweets.each { |tweet| filtered_tweets.push tweet }
     end
   end
 
