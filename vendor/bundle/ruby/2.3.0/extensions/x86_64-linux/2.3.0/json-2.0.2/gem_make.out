@@ -1,0 +1,13 @@
+current directory: /home/anshabmk/twitter-anshab/vendor/bundle/ruby/2.3.0/gems/json-2.0.2/ext/json
+/usr/bin/ruby2.3 -r ./siteconf20161209-11660-1f8dksg.rb extconf.rb
+creating Makefile
+
+current directory: /home/anshabmk/twitter-anshab/vendor/bundle/ruby/2.3.0/gems/json-2.0.2/ext/json
+make "DESTDIR=" clean
+
+current directory: /home/anshabmk/twitter-anshab/vendor/bundle/ruby/2.3.0/gems/json-2.0.2/ext/json
+make "DESTDIR="
+make: Nothing to be done for 'all'.
+
+current directory: /home/anshabmk/twitter-anshab/vendor/bundle/ruby/2.3.0/gems/json-2.0.2/ext/json
+make "DESTDIR=" install
