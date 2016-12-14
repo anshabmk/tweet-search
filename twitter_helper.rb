@@ -12,7 +12,12 @@ module TwitterHelper
 
   def self.fetch_tweets(keyword, client)
     tweets = client.search(keyword, result_type: 'recent')
-    tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
+
+    tweets.map do |tweet|
+      { time: tweet.created_at,
+        name: tweet.user.screen_name,
+        text: tweet.text }
+    end
   end
 
   def self.get_retweets(tweets)
