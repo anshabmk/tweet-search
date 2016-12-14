@@ -5,25 +5,9 @@ require 'json'
 require 'redis'
 require 'securerandom'
 require 'yaml'
-
+require_relative 'twitter_helper'
 redis = Redis.new
-
-def read_twitter_config
-  config = YAML.load_file('config.yaml')
-  @consumer_key = config['twitter_client']['consumer_key']
-  @consumer_secret = config['twitter_client']['consumer_secret']
-  @access_token = config['twitter_client']['access_token']
-  @access_token_secret = config['twitter_client']['access_token_secret']
-end
-
-read_twitter_config
-
-client = Twitter::REST::Client.new do |config|
-  config.consumer_key = @consumer_key
-  config.consumer_secret = @consumer_secret
-  config.access_token = @access_token
-  config.access_token_secret = @access_token_secret
-end
+client = TwitterHelper.configure
 
 get '/' do
   error_message = ''
@@ -31,18 +15,18 @@ get '/' do
 end
 
 post '/' do
-  key = SecureRandom.hex
   begin
     tweets = client.search(params[:keyword], result_type: 'recent')
     tweets_hash = tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
     retweets_count = 0
+    key = SecureRandom.hex
     redis.set(key, tweets_hash.to_json)
     tweets.each { |tweet| retweets_count += 1 if tweet.text.start_with? 'RT' }
 
     erb :dashboard, locals: { tweets: tweets, retweets_count: retweets_count, key: key }
   rescue Twitter::Error::Forbidden => e
     p e.message
-    error_message = "Your input was invalid. Special characters alone aren't allowed! Please try again..."
+    error_message = "Invalid input. Special characters alone aren't allowed! Please try again..."
     erb :index, locals: { error_message: error_message }
   rescue Twitter::Error::BadRequest => e
     p e.message
