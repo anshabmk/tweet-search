@@ -12,15 +12,24 @@ module TwitterHelper
 
   def self.fetch_tweets(keyword, client)
     tweets = client.search(keyword, result_type: 'recent')
-    tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
+
+    tweets.map do |tweet|
+      { time: tweet.created_at,
+        name: tweet.user.screen_name,
+        text: tweet.text }
+    end
   end
 
   def self.get_retweets(tweets)
     retweets = []
     if !tweets.first[:text].nil?
-      tweets.each { |tweet| retweets.push tweet if tweet[:text].start_with? 'RT' }
+      tweets.each do |tweet|
+        retweets.push tweet if tweet[:text].start_with? 'RT'
+      end
     else
-      tweets.each { |tweet| retweets.push tweet if tweet['text'].start_with? 'RT' }
+      tweets.each do |tweet|
+        retweets.push tweet if tweet['text'].start_with? 'RT'
+      end
     end
     return retweets
   end
@@ -49,18 +58,40 @@ module TwitterHelper
     JSON.parse(redis.get(key))
   end
 
-  def self.filter_tweets(tweets, filter_option)
+  def self.filter_today(tweets)
     filtered_tweets = []
-    case filter_option
-    when 'today'
-      tweets.each { |tweet| filtered_tweets.push tweet if tweet['time'].to_date == Date.today }
-    when 'last_five_days'
-      tweets.each { |tweet| filtered_tweets.push tweet if tweet['time'].to_date > (Date.today - 5.days) }
-    when 'before_five_days'
-      tweets.each { |tweet| filtered_tweets.push tweet if tweet['time'].to_date <= (Date.today - 5.days) }
-    else
-      tweets.each { |tweet| filtered_tweets.push tweet }
+    tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet['time'].to_date == Date.today
     end
     return filtered_tweets
+  end
+
+  def self.filter_five_days(tweets)
+    filtered_tweets = []
+    tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet['time'].to_date > (Date.today - 5.days)
+    end
+    return filtered_tweets
+  end
+
+  def self.filter_before_five_days(tweets)
+    filtered_tweets = []
+    tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet['time'].to_date <= (Date.today - 5.days)
+    end
+    return filtered_tweets
+  end
+
+  def self.filter_tweets(tweets, filter_option)
+    case filter_option
+    when 'today'
+      TwitterHelper.filter_today(tweets)
+    when 'last_five_days'
+      TwitterHelper.filter_five_days(tweets)
+    when 'before_five_days'
+      TwitterHelper.filter_before_five_days(tweets)
+    else
+      tweets
+    end
   end
 end
