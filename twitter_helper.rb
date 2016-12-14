@@ -31,17 +31,18 @@ module TwitterHelper
         retweets.push tweet if tweet['text'].start_with? 'RT'
       end
     end
-    return retweets
+
+    retweets
   end
 
   def self.save_tweets(tweets, redis)
     key = SecureRandom.hex
     redis.set(key, tweets.to_json)
-    return key
+
+    key
   end
 
   def self.error_handler(message)
-    p message
     case message
     when 'Missing or invalid url parameter.'
       "Invalid input. Special characters alone aren't allowed! Please try again..."
@@ -60,26 +61,32 @@ module TwitterHelper
 
   def self.filter_today(tweets)
     filtered_tweets = []
+
     tweets.each do |tweet|
       filtered_tweets.push tweet if tweet['time'].to_date == Date.today
     end
-    return filtered_tweets
+
+    filtered_tweets
   end
 
   def self.filter_five_days(tweets)
     filtered_tweets = []
+
     tweets.each do |tweet|
       filtered_tweets.push tweet if tweet['time'].to_date > (Date.today - 5.days)
     end
-    return filtered_tweets
+
+    filtered_tweets
   end
 
   def self.filter_before_five_days(tweets)
     filtered_tweets = []
+
     tweets.each do |tweet|
       filtered_tweets.push tweet if tweet['time'].to_date <= (Date.today - 5.days)
     end
-    return filtered_tweets
+
+    filtered_tweets
   end
 
   def self.filter_tweets(tweets, filter_option)
