@@ -40,6 +40,8 @@ module TwitterHelper
       "You seem to have entered nothing. Whitespaces alone aren't allowed. Please try again..."
     when 'execution expired.'
       'Timed Out! Please try again...'
+    else
+      "#{message}. Please try again..." 
     end
   end
 
