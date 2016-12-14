@@ -12,12 +12,7 @@ module TwitterHelper
 
   def self.fetch_tweets(keyword, client)
     tweets = client.search(keyword, result_type: 'recent')
-
-    tweets.map do |tweet|
-      { time: tweet.created_at,
-        name: tweet.user.screen_name,
-        text: tweet.text }
-    end
+    tweets.map { |tweet| { time: tweet.created_at, name: tweet.user.screen_name, text: tweet.text } }
   end
 
   def self.get_retweets(tweets)
@@ -45,6 +40,8 @@ module TwitterHelper
       "You seem to have entered nothing. Whitespaces alone aren't allowed. Please try again..."
     when 'execution expired.'
       'Timed Out! Please try again...'
+    else
+      "#{message}. Please try again..."
     end
   end
 
