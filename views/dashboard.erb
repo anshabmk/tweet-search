@@ -4,16 +4,16 @@
 <hr>
 
 <center>
-<P><%= p "No. of unique users tweeting about '#{params[:keyword]}': #{ tweets.map { |x| x.user.screen_name }.uniq.count }" %>
+<P><%= "No. of unique users tweeting about '#{params[:keyword]}': #{ tweets.map { |tweet| tweet[:name] }.uniq.count }" %>
 <br>
-<%= p "No. of tweets : #{ tweets.map { |x| x.text }.count }" %>
+<%= "No. of tweets : #{ tweets.count }" %>
 <br>
-<%= p "No. of re-tweets : #{ retweets }" %>
+<%= "No. of re-tweets : #{ retweets.count }" %>
 <br><br>
 
 <form id="key_return" action="/results" method="post">
   <input type="hidden" value="tweets" name="tweets_retweets">
-  <input type="hidden" value= "<%= p "#{key}" %>" name="key">
+  <input type="hidden" value= "<%= "#{key}" %>" name="key">
 </form>
 
 <button type="submit" form="key_return" class="button"><span>See all tweets</span></button>

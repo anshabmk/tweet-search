@@ -3,8 +3,11 @@
 <h1>Twitter Search</h1>
 
 <form action="/" method="POST">
-  <input type="text" name="keyword" placeholder="Search here...">
+  <input type="text" name="keyword" placeholder="Search here..." required>
 	<br>
+  <% unless error_message.empty? %>
+    <p class="p1"><%= "#{error_message}" %></p>
+  <% end %>
   <button class="button" type="submit"><span>Search</span></button>
 </form>
 </center>

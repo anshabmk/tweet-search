@@ -4,30 +4,30 @@
 
 <form id="filter0" action="/results" method="post">
   <input type="hidden" value="tweets" name="tweets_retweets">
-  <input type="hidden" value= "<%= p "#{key}" %>" name="key">
+  <input type="hidden" value= "<%= "#{key}" %>" name="key">
 </form>
 
 <form id="filter1" action="/results" method="post">
   <input type="hidden" value="retweets" name="tweets_retweets">
-  <input type="hidden" value= "<%= p "#{key}" %>" name="key">
+  <input type="hidden" value= "<%= "#{key}" %>" name="key">
 </form>
 
 <form id="filter2" action="/results" method="post">
   <input type="hidden" value="today" name="filter_option">
-  <input type="hidden" value="<%= p "#{tweets_retweets}" %>" name="tweets_retweets">
-  <input type="hidden" value= "<%= p "#{key}" %>" name="key">
+  <input type="hidden" value="<%= "#{tweets_retweets}" %>" name="tweets_retweets">
+  <input type="hidden" value= "<%= "#{key}" %>" name="key">
 </form>
 
 <form id="filter3" action="/results" method="post">
   <input type="hidden" value="last_five_days" name="filter_option">
-  <input type="hidden" value="<%= p "#{tweets_retweets}" %>" name="tweets_retweets">
-  <input type="hidden" value= "<%= p "#{key}" %>" name="key">
+  <input type="hidden" value="<%= "#{tweets_retweets}" %>" name="tweets_retweets">
+  <input type="hidden" value= "<%= "#{key}" %>" name="key">
 </form>
 
 <form id="filter4" action="/results" method="post">
   <input type="hidden" value="before_five_days" name="filter_option">
-  <input type="hidden" value="<%= p "#{tweets_retweets}" %>" name="tweets_retweets">
-  <input type="hidden" value= "<%= p "#{key}" %>" name="key">
+  <input type="hidden" value="<%= "#{tweets_retweets}" %>" name="tweets_retweets">
+  <input type="hidden" value= "<%= "#{key}" %>" name="key">
 </form>
 
 <center>
@@ -50,6 +50,9 @@ Filter :
   </div>
 </center>
 <hr>
+<% if filtered_tweets.empty? %>
+  <p> No tweets to display. </p>
+<% else %>
 <p>
   <table>
     <tr>
@@ -59,17 +62,14 @@ Filter :
       <th>Tweet</th>
     </tr>
 <% number = 0 %>
-<% if filtered_tweets.count > 0 %>
   <% filtered_tweets.each do |tweet| %>
       <tr>
-        <td> <%= p number += 1 %> </td>
-        <td> <%= p "#{tweet["time"].to_date}" %> </td>
-        <td> <%= p "#{tweet["name"]}" %> </td>
-        <td> <%= p "#{tweet["text"]}" %> </td>
+        <td> <%= number += 1 %> </td>
+        <td> <%= "#{tweet["time"].to_date}" %> </td>
+        <td> <%= "#{tweet["name"]}" %> </td>
+        <td> <%= "#{tweet["text"]}" %> </td>
       </tr>
   <% end %>
     </table>
-<% else %>
-      No tweets to display.
-<% end %>
 </p>
+<% end %>
