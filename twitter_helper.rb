@@ -1,7 +1,8 @@
 # Helper methods for the twitter-search application.
 module TwitterHelper
-  def self.configure
+  def config_twitter
     yaml_config = YAML.load_file('config.yaml')
+
     Twitter::REST::Client.new do |config|
       config.consumer_key = yaml_config['twitter_client']['consumer_key']
       config.consumer_secret = yaml_config['twitter_client']['consumer_secret']
@@ -10,7 +11,7 @@ module TwitterHelper
     end
   end
 
-  def self.fetch_tweets(keyword, client)
+  def fetch_tweets(keyword, client)
     tweets = client.search(keyword, result_type: 'recent')
 
     tweets.map do |tweet|
@@ -20,50 +21,87 @@ module TwitterHelper
     end
   end
 
-  def self.get_retweets(tweets)
+  def get_retweets(tweets)
     retweets = []
+
     if !tweets.first[:text].nil?
-      tweets.each { |tweet| retweets.push tweet if tweet[:text].start_with? 'RT' }
+      tweets.each do |tweet|
+        retweets.push tweet if tweet[:text].start_with? 'RT'
+      end
     else
-      tweets.each { |tweet| retweets.push tweet if tweet['text'].start_with? 'RT' }
+      tweets.each do |tweet|
+        retweets.push tweet if tweet['text'].start_with? 'RT'
+      end
     end
-    return retweets
+
+    retweets
   end
 
-  def self.save_tweets(tweets, redis)
+  def save_tweets(tweets, redis)
     key = SecureRandom.hex
+
     redis.set(key, tweets.to_json)
-    return key
+
+    key
   end
 
-  def self.error_handler(message)
-    p message
+  def error_handler(message)
     case message
     when 'Missing or invalid url parameter.'
       "Invalid input. Special characters alone aren't allowed! Please try again..."
     when 'Query parameters are missing.'
       "You seem to have entered nothing. Whitespaces alone aren't allowed. Please try again..."
-    when 'execution expired.'
+    when 'execution expired'
       'Timed Out! Please try again...'
+    else
+      "#{message}. Please try again..."
     end
   end
 
-  def self.take_tweets(key, redis)
+  def take_tweets(key, redis)
     JSON.parse(redis.get(key))
   end
 
-  def self.filter_tweets(tweets, filter_option)
+  def filter_today(tweets)
     filtered_tweets = []
+
+    tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet['time'].to_date == Date.today
+    end
+
+    filtered_tweets
+  end
+
+  def filter_five_days(tweets)
+    filtered_tweets = []
+
+    tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet['time'].to_date > (Date.today - 5.days)
+    end
+
+    filtered_tweets
+  end
+
+  def filter_before_five_days(tweets)
+    filtered_tweets = []
+
+    tweets.each do |tweet|
+      filtered_tweets.push tweet if tweet['time'].to_date <= (Date.today - 5.days)
+    end
+
+    filtered_tweets
+  end
+
+  def filter_tweets(tweets, filter_option)
     case filter_option
     when 'today'
-      tweets.each { |tweet| filtered_tweets.push tweet if tweet['time'].to_date == Date.today }
+      filter_today(tweets)
     when 'last_five_days'
-      tweets.each { |tweet| filtered_tweets.push tweet if tweet['time'].to_date > (Date.today - 5.days) }
+      filter_five_days(tweets)
     when 'before_five_days'
-      tweets.each { |tweet| filtered_tweets.push tweet if tweet['time'].to_date <= (Date.today - 5.days) }
+      filter_before_five_days(tweets)
     else
-      tweets.each { |tweet| filtered_tweets.push tweet }
+      tweets
     end
-    return filtered_tweets
   end
 end
